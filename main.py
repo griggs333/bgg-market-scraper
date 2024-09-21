@@ -18,12 +18,21 @@ game_page_prefix = "https://boardgamegeek.com"
 market_prefix = "https://boardgamegeek.com/market/browse?objecttype=thing&objectid="
 market_suffix = "&pageid=1&currency=USD&country=US"
 
+
+
 @dataclass
 class Game:
     name: str
     game_page_url: str
     id: str
     store_pricing = dict
+
+
+
+
+
+
+
 
 game_list = []
 
