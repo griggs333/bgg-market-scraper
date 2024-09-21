@@ -1,9 +1,12 @@
 import gradio as gr
 from bs4 import BeautifulSoup as bs
 import requests as req
+import pandas as pd
 import aiohttp
 from dataclasses import dataclass
 import json
+
+import apicall
 
 # REFERENCE
 
@@ -18,38 +21,25 @@ game_page_prefix = "https://boardgamegeek.com"
 market_prefix = "https://boardgamegeek.com/market/browse?objecttype=thing&objectid="
 market_suffix = "&pageid=1&currency=USD&country=US"
 
+# Create structured pandas dataframes
+
+# Games DF
+# games_df = pd.DataFrame({'bgg_id', 'title', 'bgg_page_url', 'sell_price_range'})
+
+# Major Store Listings
+major_store_listings_df = pd.DataFrame({'msl_id', 'store_name', 'msl_page_url', 'price'})
 
 
-@dataclass
-class Game:
-    name: str
-    game_page_url: str
-    id: str
-    store_pricing = dict
+# def add_wanted_games(api_ret_dict):
+#     games_df = pd.DataFrame.from_dict(api_ret_dict, orient='index')
+#     # columns=['title', 'bgg_page_url', 'sell_price_range'])
+#     print(games_df)
+#
+#     return games_df
 
 
-
-
-
-
-
-
-game_list = []
 
 url = "https://boardgamegeek.com/collection/user/griggs333?rankobjecttype=subtype&rankobjectid=1&columns=title%7Cstatus%7Cversion%7Crating%7Cbggrating%7Cplays%7Ccomment%7Ccommands&geekranks=Board+Game+Rank&wanttobuy=1&objecttype=thing&ff=1&subtype=boardgame"
-
-def wanted_scrape(wanted_url):
-    hdr = {'User-Agent': 'Mozilla/5.0'}
-    wanted_market_page = req.get(wanted_url, headers=hdr)
-    soup = bs(wanted_market_page.content,'html.parser')
-    links_list = soup.find_all("a", "primary")
-    return_list = []
-
-    for item in links_list:
-        return_list.append([item.text, item['href'], str(item['href']).split("/")[2]])
-        game_list = game_list.append(Game(name=item.text, game_page_url=game_page_prefix + item['href'], id= str(item['href']).split("/")[2]))
-    wanted_out = game_list
-    return wanted_out
 
 def game_page_scraper(game_list):
     return_list = []
@@ -61,13 +51,11 @@ def game_page_scraper(game_list):
 
 
 
-
-
 def scraper_main(wanted_url):
-    wanted_list = wanted_scrape(wanted_url)
-    game_deets = game_page_scraper(wanted_list)
-
-
+    # wanted_list = wanted_scrape(wanted_url)
+    # game_deets = game_page_scraper(wanted_list)
+    games_df = apicall.xml_api_collections(wanted_url)
+    temp_out = games_df
 
     return temp_out
 
