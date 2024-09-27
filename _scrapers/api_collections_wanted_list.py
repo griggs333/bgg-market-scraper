@@ -1,6 +1,7 @@
 import time
 from bs4 import BeautifulSoup as bs
 import requests
+import pandas as pd
 
 # url = "https://boardgamegeek.com/xmlapi2/collection?username=griggs333&brief=1&wanttobuy=1"
 
@@ -14,7 +15,7 @@ def xml_api_collections(url):
 
     retry_limit = 3
     retries = 0
-    response_code = 0
+    retry_wait_time = 10
 
     while retries < retry_limit:
         response = requests.request("GET", url, headers=headers, data=payload)
@@ -24,7 +25,7 @@ def xml_api_collections(url):
             retries += 1
             print("Returned " + str(response.status_code) + " status code. Will retry in 30 sec. \
                   Retry #" + str(retries) + ". Retry Limit is " + str(retry_limit))
-            time.sleep(30)
+            time.sleep(retry_wait_time)
 
     if retries == retry_limit:
         raise TimeoutError
@@ -39,6 +40,7 @@ def xml_api_collections(url):
                 'bgg_page_url': 'https://boardgamegeek.com/boardgame/' + bgg_id,
                 'sell_price_range': ''
                 }
+
     api_ret_df = pd.DataFrame.from_dict(api_ret_dict, orient='index')
 
     return api_ret_df
